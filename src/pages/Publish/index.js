@@ -15,25 +15,16 @@ import { Link } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
-import { useEffect, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { addArticleAPI, getChannelsAPI } from '@/apis/article'
+import { useRef, useState } from 'react'
+import { addArticleAPI } from '@/apis/article'
+import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
 
 const Publish = () => {
-  const [channels,setChannels]=useState([])
-// const dispatch=useDispatch()
 
-  useEffect(() => {
-    // 封装函数，在函数体内调用接口
-    const getChannels = async () => {
-      const res = await getChannelsAPI()
-      setChannels(res.data.channels)
-    }
-    // 调用函数
-    getChannels()
-  }, [])
+  // 获取频道列表
+  const {channels}= useChannel()
 
   // 通过useRef创建一个暂存仓库，在上传完毕图片的时候把图片列表存入
   const cacheImgList = useRef([])
