@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { Layout, Menu, Popconfirm } from 'antd'
 import {
@@ -36,6 +36,10 @@ const GeekLayout = () => {
     navigate(route.key)
   }
 
+  // 获取当前路径
+  const location = useLocation()
+  const selectedKey = location.pathname
+
   return (
     <Layout>
       <Header className="header">
@@ -54,7 +58,7 @@ const GeekLayout = () => {
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={['/']}
+            selectedKeys={selectedKey}
             items={items}
             onClick={onMenuClick}
             style={{ height: '100%', borderRight: 0 }}></Menu>
