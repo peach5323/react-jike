@@ -47,21 +47,25 @@ const [imgType, setImgType] = useState(0)
   const onRadioChange = (e) => {
     // console.log(e);
     setImgType(e.target.value)
+    if (e.target.value === 0) {
+      setImgList([])
+    }
   }
 
   const [draft, setDraft] = useState(false)
   // 发布文章/草稿
   const onFinish = async (formData) => {
     console.log(formData);
+    if(imgList.length !== imgType) return message.warning('封面类型与图片数量不匹配')
+
     const { channel_id, content, title } = formData
     const params = {
       channel_id,
       content,
       title,
-      type: 1,
       cover: {
-        type: 1,
-        images: imgList
+        type: imgType,
+        images: imgList.map(item=>item.response.data.url)
       }
     }
     await addArticleAPI({ draft, data: params })
@@ -116,6 +120,7 @@ const [imgType, setImgType] = useState(0)
             </Form.Item>
             {imgType > 0 && <Upload
               name='image'
+              maxCount={imgType}
               listType="picture-card"
               showUploadList
               action={'http://geek.itheima.net/v1_0/upload'}
