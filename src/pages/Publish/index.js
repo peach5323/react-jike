@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addArticleAPI, getChannelsAPI } from '@/apis/article'
 
@@ -35,20 +35,30 @@ const Publish = () => {
     getChannels()
   }, [])
 
-  const [imgList,setImgList]=useState([])
+  // 通过useRef创建一个暂存仓库，在上传完毕图片的时候把图片列表存入
+  const cacheImgList = useRef([])
+  const [imgList, setImgList] = useState([])
   // 上传图片
   const onUploadChange = (info) => {
     // console.log(info);
     setImgList(info.fileList)
+    cacheImgList.current = info.fileList
   }
 
-const [imgType, setImgType] = useState(0)
+  const [imgType, setImgType] = useState(0)
+
   // 切换封面图片类型
   const onRadioChange = (e) => {
     // console.log(e);
     setImgType(e.target.value)
     if (e.target.value === 0) {
       setImgList([])
+    } else if (e.target.value === 1) {
+      // 单图，截取第一张展示
+      setImgList(cacheImgList.current[0] ? [cacheImgList.current[0]] : [])
+    } else {
+      // 三图，取所有图片展示
+      setImgList(cacheImgList.current)
     }
   }
 
@@ -118,6 +128,7 @@ const [imgType, setImgType] = useState(0)
                 <Radio value={0}>无图</Radio>
               </Radio.Group>
             </Form.Item>
+            {/* {需要给Upload组件添加fileList属性，达成受控的目的 } */}
             {imgType > 0 && <Upload
               name='image'
               maxCount={imgType}
@@ -125,6 +136,8 @@ const [imgType, setImgType] = useState(0)
               showUploadList
               action={'http://geek.itheima.net/v1_0/upload'}
               onChange={onUploadChange}
+              multiple={imgType > 1}
+              fileList={imgList}
             >
               <div style={{ marginTop: 8 }}>
                 <PlusOutlined />
