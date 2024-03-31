@@ -1,13 +1,13 @@
 import * as echarts from 'echarts'
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 const Home = () => {
 
-  
+  const chartRef=useRef(null)
   useEffect(() => {
     // 保证dom可用 才进行图标的渲染
     // 渲染图表的dom节点
-    const chartDom = document.getElementById('main');
+    const chartDom = chartRef.current
     // 图表初始化实例化对象
     const myChart = echarts.init(chartDom);
     // 图表参数
@@ -30,7 +30,7 @@ const Home = () => {
     option && myChart.setOption(option);
 })
 
-  return <div><div id="main" style={{width:'500px',height:'500px'}}></div></div>
+  return <div><div ref={chartRef} style={{width:'500px',height:'500px'}}></div></div>
 }
 
 export default Home
