@@ -14,6 +14,11 @@ const { RangePicker } = DatePicker
 
 const Article = () => {
 
+  // 定义枚举
+  const status = {
+    1: <Tag color="warning">未审核</Tag>,
+    2: <Tag color="success">审核通过</Tag>,
+  }
   // 准备列数据
   const columns = [
     {
@@ -32,7 +37,9 @@ const Article = () => {
     {
       title: '状态',
       dataIndex: 'status',
-      render: data => <Tag color="green">审核通过</Tag>
+      // render: data => data === 1 ?
+      //   <Tag color="warning">未审核</Tag> : <Tag color="success">审核通过</Tag>
+      render: data => status[data]
     },
     {
       title: '发布时间',

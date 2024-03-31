@@ -16,6 +16,7 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { addArticleAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 
@@ -54,9 +55,10 @@ const Publish = () => {
   }
 
   const [draft, setDraft] = useState(false)
+  const navigate = useNavigate()
   // 发布文章/草稿
   const onFinish = async (formData) => {
-    console.log(formData);
+    // console.log(formData);
     if(imgList.length !== imgType) return message.warning('封面类型与图片数量不匹配')
 
     const { channel_id, content, title } = formData
@@ -75,6 +77,8 @@ const Publish = () => {
     } else {
       message.success('发布文章成功')
     }
+
+    navigate('/article')
   }
 
   return (
