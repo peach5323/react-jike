@@ -16,6 +16,7 @@ const Article = () => {
 
   // 定义枚举
   const status = {
+    0: <Tag >草稿</Tag>,
     1: <Tag color="warning">未审核</Tag>,
     2: <Tag color="success">审核通过</Tag>,
   }
@@ -93,17 +94,44 @@ const Article = () => {
   // 获取频道列表
   const { channels } = useChannel()
 
+  const [params, setParams] = useState({
+    status: '',
+    channel_id: '',
+    begin_pubdate: '',
+    end_pubdate: '',
+    page: 1,
+    per_page:4
+  })
+
   // 获取文章列表
   const [articleList, setArticleList] = useState([])
   const [totalPage, setTotalPage]=useState(0)
   useEffect(() => {
-    const getArticleList = async() => {
-      const res = await getArticleListAPI()
+    const getArticleList = async () => {
+      console.log('params',params);
+
+      const res = await getArticleListAPI(params)
       setArticleList(res.data.results)
       setTotalPage(res.data.total_count)
     }
     getArticleList()
-  },[])
+  }, [params])
+  
+  // 筛选功能
+  const onFinish = (formData)=>{
+    console.log('formData',formData);
+    // 把表单收集到数据放到参数中（不可变的方式）
+    setParams({
+      ...params,
+      begin_pubdate: formData.date[0]?.format('YYYY-MM-DD'),
+      end_pubdate: formData.date[1]?.format('YYYY-MM-DD'),
+      status: formData.status,
+      channel_id: formData.channel_id,
+    })
+    
+    // 重新拉取文章列表
+    // params依赖发生变化，重新执行副作用函数
+  }
 
   return (
     <div>
@@ -116,11 +144,12 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }}>
+        <Form onFinish={onFinish} initialValues={{ status: '', channel_id: '', date: '' }}>
           <Form.Item label="状态" name="status">
             <Radio.Group>
               <Radio value={''}>全部</Radio>
               <Radio value={0}>草稿</Radio>
+              <Radio value={1}>未审核</Radio>
               <Radio value={2}>审核通过</Radio>
             </Radio.Group>
           </Form.Item>
