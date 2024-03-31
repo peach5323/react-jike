@@ -7,7 +7,8 @@ import {
   Input,
   Upload,
   Space,
-  Select
+  Select,
+  message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
@@ -16,7 +17,7 @@ import 'react-quill/dist/quill.snow.css'
 import './index.scss'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { getChannelsAPI } from '@/apis/article'
+import { addArticleAPI, getChannelsAPI } from '@/apis/article'
 
 const { Option } = Select
 
@@ -34,6 +35,43 @@ const Publish = () => {
     getChannels()
   }, [])
 
+  const [imgList,setImgList]=useState([])
+  // 上传图片
+  const onUploadChange = (info) => {
+    // console.log(info);
+    setImgList(info.fileList)
+  }
+
+const [imgType, setImgType] = useState(0)
+  // 切换封面图片类型
+  const onRadioChange = (e) => {
+    // console.log(e);
+    setImgType(e.target.value)
+  }
+
+  const [draft, setDraft] = useState(false)
+  // 发布文章/草稿
+  const onFinish = async (formData) => {
+    console.log(formData);
+    const { channel_id, content, title } = formData
+    const params = {
+      channel_id,
+      content,
+      title,
+      type: 1,
+      cover: {
+        type: 1,
+        images: imgList
+      }
+    }
+    await addArticleAPI({ draft, data: params })
+    if (draft) {
+      message.success('存为草稿成功')
+    } else {
+      message.success('发布文章成功')
+    }
+  }
+
   return (
     <div className="publish">
       <Card
@@ -46,9 +84,10 @@ const Publish = () => {
         }
       >
         <Form
+          onFinish={onFinish}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: 1 }}
+          initialValues={{type:imgType}}
         >
           <Form.Item
             label="标题"
@@ -67,7 +106,29 @@ const Publish = () => {
              
             </Select>
           </Form.Item>
+          <Form.Item label="封面">
+            <Form.Item name="type">
+              <Radio.Group onChange={onRadioChange}>
+                <Radio value={1}>单图</Radio>
+                <Radio value={3}>三图</Radio>
+                <Radio value={0}>无图</Radio>
+              </Radio.Group>
+            </Form.Item>
+            {imgType > 0 && <Upload
+              name='image'
+              listType="picture-card"
+              showUploadList
+              action={'http://geek.itheima.net/v1_0/upload'}
+              onChange={onUploadChange}
+            >
+              <div style={{ marginTop: 8 }}>
+                <PlusOutlined />
+              </div>
+            </Upload>}
+            
+          </Form.Item>
           <Form.Item
+            id="content"
             label="内容"
             name="content"
             rules={[{ required: true, message: '请输入文章内容' }]}
@@ -81,7 +142,11 @@ const Publish = () => {
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
-              <Button size="large" type="primary" htmlType="submit">
+              {/* {onClick = { onDraft } } */}
+              <Button onClick={()=>setDraft(true)} size="large" htmlType="submit">
+                存为草稿
+              </Button>
+              <Button onClick={() => setDraft(false)} size="large" type="primary" htmlType="submit">
                 发布文章
               </Button>
             </Space>
