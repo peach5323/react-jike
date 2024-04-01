@@ -85,13 +85,22 @@ const Publish = () => {
   // 数据回显
   const [searchParams] = useSearchParams()
   const articleId = searchParams.get('id')
+  // 获取实例
   const [dataForm] = useForm()
   // 编辑
   useEffect(() => {
     const getArticleDetail = async () => {
-    //   console.log(id);
       const res = await getArticleDetailAPI(articleId)
-      dataForm.setFieldsValue(res.data)
+      const data = res.data
+      // 1. 回显表单数据
+      const { cover: { type, images } } = data
+      dataForm.setFieldsValue({
+        ...data,
+        type
+      })
+      // 2. 回显封面图片
+      setImgType(type)
+      setImgList(images.map(url => {return {url}}))
     }
     getArticleDetail()
   }, [articleId, dataForm])
