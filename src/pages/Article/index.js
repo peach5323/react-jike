@@ -99,7 +99,7 @@ const Article = () => {
     channel_id: '',
     begin_pubdate: '',
     end_pubdate: '',
-    page: 1,
+    page: 1,  //当前页
     per_page:4
   })
 
@@ -108,7 +108,7 @@ const Article = () => {
   const [totalPage, setTotalPage]=useState(0)
   useEffect(() => {
     const getArticleList = async () => {
-      console.log('params',params);
+      // console.log('params',params);
 
       const res = await getArticleListAPI(params)
       setArticleList(res.data.results)
@@ -119,7 +119,7 @@ const Article = () => {
   
   // 筛选功能
   const onFinish = (formData)=>{
-    console.log('formData',formData);
+    // console.log('formData',formData);
     // 把表单收集到数据放到参数中（不可变的方式）
     setParams({
       ...params,
@@ -131,6 +131,15 @@ const Article = () => {
     
     // 重新拉取文章列表
     // params依赖发生变化，重新执行副作用函数
+  }
+
+  // 分页
+  const onPageChange = (page) => {
+    console.log(page);
+    setParams({
+      ...params,
+      page
+    })
   }
 
   return (
@@ -179,7 +188,13 @@ const Article = () => {
       <div>
         {/*        */}
         <Card title={`根据筛选条件共查询到 ${totalPage} 条结果：`}>
-          <Table rowKey="id" columns={columns} dataSource={articleList} />
+          <Table rowKey="id" columns={columns} dataSource={articleList}
+            pagination={{
+              page:params.page,
+              total: totalPage,
+              pageSize: params.per_page,
+              onChange: onPageChange
+            }} />
         </Card>
       </div>
     </div>
