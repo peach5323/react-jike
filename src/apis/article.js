@@ -11,3 +11,9 @@ export const getArticleListAPI = (params) => request.get('/mp/articles', { param
 
 // 删除-文章
 export const delArticleAPI = (id) => request.delete(`mp/articles/${id}`)
+
+// 获取-文章详情
+export const getArticleDetailAPI = (id) => request.get(`mp/articles/${id}`)
+
+// 编辑-文章
+export const editArticleAPI = (id) => request.put(`mp/articles/${id}`)

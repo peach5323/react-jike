@@ -7,6 +7,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import { useChannel } from '@/hooks/useChannel'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getArticleListAPI, delArticleAPI } from '@/apis/article'
 
 const { Option } = Select
@@ -63,7 +64,7 @@ const Article = () => {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button onClick={() => navigate(`/publish?id=${data.id}`)} type="primary" shape="circle" icon={<EditOutlined />} />
             <Popconfirm
               title="确认删除该文章吗？"
               onConfirm={()=>onConfirm(data.id)}
@@ -82,21 +83,8 @@ const Article = () => {
       }
     }
   ]
-  // 准备表格body数据
-  const data = [
-    {
-      id: '8218',
-      comment_count: 0,
-      cover: {
-        images: [],
-      },
-      like_count: 0,
-      pubdate: '2019-03-11 09:00:00',
-      read_count: 2,
-      status: 2,
-      title: 'wkwebview离线化加载h5资源解决方案'
-    }
-  ]
+
+  const navigate = useNavigate()
 
   // 获取频道列表
   const { channels } = useChannel()

@@ -11,14 +11,15 @@ import {
   message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import './index.scss'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { addArticleAPI } from '@/apis/article'
+import { addArticleAPI, getArticleDetailAPI, editArticleAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
+import { useForm } from 'antd/es/form/Form'
 
 const { Option } = Select
 
@@ -81,6 +82,21 @@ const Publish = () => {
     navigate('/article')
   }
 
+  // 数据回显
+  const [searchParams] = useSearchParams()
+  const articleId = searchParams.get('id')
+  const [dataForm] = useForm()
+  // 编辑
+  useEffect(() => {
+    const getArticleDetail = async () => {
+    //   console.log(id);
+      const res = await getArticleDetailAPI(articleId)
+      dataForm.setFieldsValue(res.data)
+    }
+    getArticleDetail()
+  }, [articleId, dataForm])
+
+
   return (
     <div className="publish">
       <Card
@@ -96,7 +112,8 @@ const Publish = () => {
           onFinish={onFinish}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{type:imgType}}
+          initialValues={{ type: imgType }}
+          form={dataForm}
         >
           <Form.Item
             label="标题"
