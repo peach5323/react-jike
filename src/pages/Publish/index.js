@@ -100,9 +100,15 @@ const Publish = () => {
       })
       // 2. 回显封面图片
       setImgType(type)
-      setImgList(images.map(url => {return {url}}))
+    const imageUrls =  images.map(url => { return { url } })
+      setImgList(imageUrls)
+      cacheImgList.current = imageUrls
     }
-    getArticleDetail()
+
+    // 根据id做适配
+    if (articleId) {
+      getArticleDetail()
+    }
   }, [articleId, dataForm])
 
 
@@ -112,7 +118,7 @@ const Publish = () => {
         title={
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
-            { title: '发布文章' },
+            { title: `${articleId?'编辑':'发布'}文章` },
           ]}
           />
         }
