@@ -64,15 +64,27 @@ const Publish = () => {
 
     const { channel_id, content, title } = formData
     const params = {
+      id:articleId,
       channel_id,
       content,
       title,
       cover: {
         type: imgType,
-        images: imgList.map(item=>item.response.data.url)
+        images: imgList.map(item => {
+          if (item.response) {
+            return item.response.data.url
+          } else {
+            return item.url
+          }}
+        )
       }
     }
-    await addArticleAPI({ draft, data: params })
+    if (articleId) {
+      await editArticleAPI({ id: articleId, data: {...params} })
+    } else {
+      await addArticleAPI({ draft, data: params })
+    }
+    
     if (draft) {
       message.success('存为草稿成功')
     } else {
@@ -127,7 +139,7 @@ const Publish = () => {
           onFinish={onFinish}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: imgType }}
+          initialValues={{ type: imgType,channel_id:'' }}
           form={dataForm}
         >
           <Form.Item

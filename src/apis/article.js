@@ -16,4 +16,4 @@ export const delArticleAPI = (id) => request.delete(`mp/articles/${id}`)
 export const getArticleDetailAPI = (id) => request.get(`mp/articles/${id}`)
 
 // 编辑-文章
-export const editArticleAPI = (id) => request.put(`mp/articles/${id}`)
+export const editArticleAPI = ({ id, data }) => request.put(`mp/articles/${id}`,data)

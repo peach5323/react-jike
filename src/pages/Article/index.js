@@ -95,7 +95,7 @@ const Article = () => {
     begin_pubdate: '',
     end_pubdate: '',
     page: 1,  //当前页
-    per_page:1
+    per_page:10
   })
 
   // 获取文章列表
